@@ -1,0 +1,24 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wry.dao.OrderDetailDao">
+    <!--批量添加订单明细-->
+    <insert id="saveOrderDetail"  parameterType="java.util.List">
+        INSERT into mall_order_item(orderid,goodsid,nums,price)
+        <foreach collection="list" item="detail" open="VALUES" separator=",">
+            (#{detail.orderid},#{detail.goodsid},#{detail.nums},#{detail.price})
+        </foreach>
+    </insert>
+
+    <resultMap id="detail_good" type="com.wry.domain.OrderDetail" autoMapping="true">
+<!--        配置订单表-->
+        <association property="orders"
+                     column="orderid"
+                     javaType="com.wry.domain.Orders"
+                     autoMapping="true"
+                     select="com.wry.dao.OrdersDao.getUser"/>
+    </resultMap>
+    <select id="queryOrderDetailByGoodsId" resultMap="detail_good">
+        select *from mall_order_item where goodsid=#{goodsid}
+    </select>
+</mapper>
